@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+        "args": [
+          "-y",
+            "@modelcontextprotocol/server-filesystem",
+            "/home/davidmathias/work/mcp/mcp-client-demo-01/user-context"
+        ]
+    }
+  }
+}

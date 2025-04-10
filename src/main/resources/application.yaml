@@ -6,3 +6,7 @@ spring:
       chat:
         options:
           model: gemma2-9b-it
+    mcp:
+      client:
+        stdio:
+          servers-configuration: classpath:fs-config.json

@@ -6,6 +6,7 @@ import io.modelcontextprotocol.client.transport.ServerParameters;
 import io.modelcontextprotocol.client.transport.StdioClientTransport;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
+import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,19 +33,8 @@ public class ClientApplication {
 @Configuration
 class ThirdPartyConfiguration{
 	@Bean
-	NamedMCPClientRunner namedMCPClientRunner(ChatClient.Builder builder, McpSyncClient mcpSyncClient) {
-		var tools = new SyncMcpToolCallbackProvider(mcpSyncClient);
-		return new NamedMCPClientRunner(builder.defaultTools(tools));
-	}
-	@Bean
-	McpSyncClient mcpSyncClient(@Value(ClientApplication.FOLDER) File root) {
-		ServerParameters serverParameters = ServerParameters
-				.builder("npx")
-				.args("-y", "@modelcontextprotocol/server-filesystem", root.getAbsolutePath())
-				.build();
-		McpSyncClient mcp = McpClient.sync(new StdioClientTransport(serverParameters)).build();
-		mcp.initialize();
-		return mcp;
+	NamedMCPClientRunner namedMCPClientRunner(ChatClient.Builder builder, ToolCallbackProvider provider) {
+		return new NamedMCPClientRunner(builder.defaultTools(provider));
 	}
 }
 
