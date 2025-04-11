@@ -17,12 +17,9 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties.Async;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.util.concurrent.atomic.AtomicReference;
 
 @SpringBootApplication
@@ -38,14 +35,14 @@ public class ClientApplication {
 class ServerMCPClientConfiguration {
 
 	@Bean
-	McpAsyncClient mcpClient(@Value("${mcp.servers.server1.url}") String url) {
-	    McpAsyncClient	mcp = McpClient.async(new HttpClientSseClientTransport(url)).build();
+	McpSyncClient mcpClient(@Value("${mcp.servers.server1.url}") String url) {
+	    McpSyncClient	mcp = McpClient.sync(new HttpClientSseClientTransport(url)).build();
 		mcp.initialize();
 		return mcp;
 	}
 	@Bean
-	NamedMCPClientRunner namedMCPClientRunner(ChatClient.Builder builder, McpAsyncClient mcpClient) {
-		ToolCallbackProvider provider = new AsyncMcpToolCallbackProvider(mcpClient);
+	NamedMCPClientRunner namedMCPClientRunner(ChatClient.Builder builder, McpSyncClient mcpClient) {
+		ToolCallbackProvider provider = new SyncMcpToolCallbackProvider(mcpClient);
 
 		return new NamedMCPClientRunner(builder.defaultTools(provider));
 	}
