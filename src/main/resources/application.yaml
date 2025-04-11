@@ -1,12 +1,18 @@
 spring:
+  main:
+    banner-mode: "off"
   ai:
     openai:
       api-key: ${GROQ_API_KEY}
       base-url: https://api.groq.com/openai
       chat:
         options:
-          model: gemma2-9b-it
+          model: meta-llama/llama-4-scout-17b-16e-instruct
 mcp:
   servers:
     server1:
       url: http://localhost:8081
+logging:
+  level:
+    root: ERROR
+    org.springframework.web: ERROR

@@ -20,6 +20,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 
 @SpringBootApplication
@@ -69,21 +70,33 @@ class NamedMCPClientRunner  implements ApplicationRunner, BeanNameAware {
 	public void run(ApplicationArguments args) throws Exception {
 
 		var prompt = """
-				Can you give me the name and gpa of students who got above 3 gpa?
+				Give me all student details
 				""";
 
-		var response = this.builder.build().prompt(prompt).call().entity(Student.class);
+		ChatClient.ChatClientRequestSpec chatClientRequestSpec = this.builder.build().prompt(prompt);
+		ChatClient.CallResponseSpec call = chatClientRequestSpec.call();
+		var response = call.entity(Students.class);
 
 		System.out.println("Response: " + response);
 	}
 }
 
-record Student(String name, int  gpa) {
+record Student(String name, float  gpa, int age) {
 	@Override
 	public String toString() {
 		return "Student{" +
 				"Name='" + name + '\'' +
+				", age=" + age +
 				", gpa='" + gpa + '\'' +
 				'}';
 	}
 }
+record Students(Student[] students) {
+	@Override
+	public String toString() {
+		return "Students{" +
+				"students=" + Arrays.toString(students) +
+				'}';
+	}
+}
+
