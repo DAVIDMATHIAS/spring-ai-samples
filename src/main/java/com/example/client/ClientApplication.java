@@ -69,22 +69,21 @@ class NamedMCPClientRunner  implements ApplicationRunner, BeanNameAware {
 	public void run(ApplicationArguments args) throws Exception {
 
 		var prompt = """
-				What files are in the user-context folder, and of those files, 
-				which have a name that corresponds to a chinese greeting?
+				Can you give me the name and gpa of students who got above 3 gpa?
 				""";
 
-		var response = this.builder.build().prompt(prompt).call().entity(ChineseFile.class);
+		var response = this.builder.build().prompt(prompt).call().entity(Student.class);
 
 		System.out.println("Response: " + response);
 	}
 }
 
-record ChineseFile(String fileName, String wording) {
+record Student(String name, int  gpa) {
 	@Override
 	public String toString() {
-		return "ChineseFile{" +
-				"fileName='" + fileName + '\'' +
-				", wording='" + wording + '\'' +
+		return "Student{" +
+				"Name='" + name + '\'' +
+				", gpa='" + gpa + '\'' +
 				'}';
 	}
 }
