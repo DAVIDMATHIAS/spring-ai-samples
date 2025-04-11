@@ -1,10 +1,13 @@
 package com.example.client;
 
+import io.modelcontextprotocol.client.McpAsyncClient;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
+import io.modelcontextprotocol.client.transport.HttpClientSseClientTransport;
 import io.modelcontextprotocol.client.transport.ServerParameters;
 import io.modelcontextprotocol.client.transport.StdioClientTransport;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.mcp.AsyncMcpToolCallbackProvider;
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.annotation.Tool;
@@ -14,6 +17,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties.Async;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
@@ -31,9 +35,18 @@ public class ClientApplication {
 }
 
 @Configuration
-class ThirdPartyConfiguration{
+class ServerMCPClientConfiguration {
+
 	@Bean
-	NamedMCPClientRunner namedMCPClientRunner(ChatClient.Builder builder, ToolCallbackProvider provider) {
+	McpAsyncClient mcpClient(@Value("${mcp.servers.server1.url}") String url) {
+	    McpAsyncClient	mcp = McpClient.async(new HttpClientSseClientTransport(url)).build();
+		mcp.initialize();
+		return mcp;
+	}
+	@Bean
+	NamedMCPClientRunner namedMCPClientRunner(ChatClient.Builder builder, McpAsyncClient mcpClient) {
+		ToolCallbackProvider provider = new AsyncMcpToolCallbackProvider(mcpClient);
+
 		return new NamedMCPClientRunner(builder.defaultTools(provider));
 	}
 }

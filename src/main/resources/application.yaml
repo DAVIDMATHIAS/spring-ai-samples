@@ -6,7 +6,7 @@ spring:
       chat:
         options:
           model: gemma2-9b-it
-    mcp:
-      client:
-        stdio:
-          servers-configuration: classpath:fs-config.json
+mcp:
+  servers:
+    server1:
+      url: http://localhost:8081
